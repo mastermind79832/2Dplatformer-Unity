@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -7,7 +8,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private Rigidbody2D rb;
+
+    public UIManager uI;
     private bool isGrounded, isCrouch, isSecondJump;
+
+    private bool[] keys;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +20,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = false;
         isCrouch = false;
         isSecondJump = false;
+        keys = new bool[3];
     }
 
     // Update is called once per frame
@@ -64,6 +70,27 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", Mathf.Abs(velocity.x));  
         anim.SetBool("IsCrouch",isCrouch);
         rb.velocity = velocity;
+    }
+
+     private void AddKeysToInventory()
+    {
+        for (int i = 0; i < keys.Length; i++)
+        {
+            if(!keys[i])
+            {
+                keys[i] = true;
+                uI.KeysObtained(i);
+                break;
+            }
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other) {
+        if(other.tag == "Key")
+        {
+            AddKeysToInventory();
+            Destroy(other.gameObject);
+        }
     }
 
     private void OnCollisionStay2D(Collision2D other)
