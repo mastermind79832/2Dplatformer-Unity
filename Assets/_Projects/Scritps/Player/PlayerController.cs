@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    static private PlayerController s_PlayerInstance;
+    static public PlayerController playerInstance { get {return s_PlayerInstance;} }
+
     [SerializeField] private Animator anim;
     [SerializeField] private Collider2D groundCheck;
     [SerializeField] private float movementSpeed;
@@ -13,6 +16,11 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded, isCrouch, isSecondJump;
 
     private bool[] keys;
+
+    void Awake()
+    {
+        s_PlayerInstance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +36,8 @@ public class PlayerController : MonoBehaviour
     {
         Movement();
     }
+
+    public Vector3 GetLocation() {  return transform.position;  }
 
     /** Vertical Movement
      * Jump
