@@ -1,4 +1,6 @@
+using System.Threading;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -12,10 +14,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpSpeed;
     [SerializeField] private Rigidbody2D rb;
 
+    private Vector3 respawnPoint;
     public UIManager uI;
     private bool isGrounded, isCrouch, isSecondJump;
 
     private bool[] keys;
+    private float timeOut;
 
     void Awake()
     {
@@ -25,6 +29,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        respawnPoint = transform.position;
         isGrounded = false;
         isCrouch = false;
         isSecondJump = false;
@@ -35,6 +40,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Movement();
+        IncreaseTimeoutTime();
+    }
+
+    private void IncreaseTimeoutTime()
+    {
+        timeOut += Time.deltaTime;
     }
 
     public Vector3 GetLocation() {  return transform.position;  }
@@ -101,6 +112,45 @@ public class PlayerController : MonoBehaviour
             AddKeysToInventory();
             Destroy(other.gameObject);
         }
+        if(other.CompareTag("Acid") && timeOut > 2)
+            respawn();
+    }
+
+    void OnCollisionEnter2D(Collision2D other) {
+        if(other.gameObject.CompareTag("Enemy") )
+            respawn();
+    }
+
+    private void respawn()
+    {
+        timeOut = 0;
+        uI.HealthLost();
+        if(uI.GetRemainingHealth() <= 0 )
+        {
+            StartCoroutine(WaitForDeath()); 
+            return;
+        }
+        StartCoroutine(Hurt());
+    }
+
+    IEnumerator Hurt()
+    {
+        anim.Play("Hurt");
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    IEnumerator WaitForDeath()
+    {
+        anim.SetTrigger("IsDead");
+        yield return new WaitForSeconds(0.5f);
+        transform.position = respawnPoint;
+        PlayerDeath();
+    }
+
+    private void PlayerDeath()
+    {
+        //GAmeOverSCene
+        uI.SetGameOverPanel();
     }
 
     private void OnCollisionStay2D(Collision2D other)

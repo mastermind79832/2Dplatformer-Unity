@@ -290,6 +290,7 @@ public class EnemyController : MonoBehaviour
         Vector3 start = transform.position + Vector3.left * patrolingDistance + Vector3.up * 0.5f;
         Vector2 end = transform.position + Vector3.right * patrolingDistance + Vector3.up * 0.5f;
         Handles.DrawLine(start,end);
+
     }
 #endif
 #endregion
