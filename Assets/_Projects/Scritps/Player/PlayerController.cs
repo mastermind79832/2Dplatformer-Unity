@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private Rigidbody2D rb;
+    public AudioSource footStep;
 
     private Vector3 respawnPoint;
     public UIManager uI;
@@ -18,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private bool[] keys;
     private float timeOut;
+    private bool IsFootstepPlaying;
 
     void Awake()
     {
@@ -61,6 +65,8 @@ public class PlayerController : MonoBehaviour
         //  Horizintal Movement  
         if(xInput != 0 && !isCrouch) 
         {
+            if(isGrounded)
+                PlayFootStep();
             Vector2 scale = transform.localScale;
             int side = ((xInput > 0)?1:-1);
             scale.x = Mathf.Abs(scale.x) * side;
@@ -68,7 +74,11 @@ public class PlayerController : MonoBehaviour
             transform.localScale = scale;
         }
         else
+        {   
             velocity.x = 0;
+            IsFootstepPlaying = false;
+            footStep.Stop();
+        }
 
         //  Jump and Crouch
         if(Input.GetKeyDown(KeyCode.Space) && (isGrounded || isSecondJump))
@@ -91,7 +101,16 @@ public class PlayerController : MonoBehaviour
         rb.velocity = velocity;
     }
 
-     private void AddKeysToInventory()
+    private void PlayFootStep()
+    {
+        if(IsFootstepPlaying)
+            return;
+
+        footStep.Play();
+        IsFootstepPlaying = true;
+    }
+
+    private void AddKeysToInventory()
     {
         for (int i = 0; i < keys.Length; i++)
         {
