@@ -1,9 +1,14 @@
+using System;
+using System.Net.NetworkInformation;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DoorScript : MonoBehaviour
 {
     [SerializeField] private SwitchScript switchScript;
     [SerializeField] private Animator anim;
+
+    public string nextLevel;
 
     private bool isDoorOpen = false;
     
@@ -26,7 +31,12 @@ public class DoorScript : MonoBehaviour
     {
         if(other.tag == "Player" && isDoorOpen)
         {
-            Debug.Log("Game Won");
+            LevelStatus nextLevelStatus = LevelManager.levelInstance.GetLevelStatus(nextLevel);
+            if(nextLevelStatus == LevelStatus.Locked)
+                LevelManager.levelInstance.SetLevelStatus(nextLevel,LevelStatus.Unlocked);
+            string currentLevel = SceneManager.GetActiveScene().name;
+            LevelManager.levelInstance.SetLevelStatus(currentLevel,LevelStatus.Completed);
+            SceneManager.LoadScene(nextLevel);
         }
     }
 }

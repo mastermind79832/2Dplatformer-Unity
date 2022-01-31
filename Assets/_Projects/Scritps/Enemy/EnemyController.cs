@@ -22,9 +22,9 @@ public class EnemyController : MonoBehaviour
     [Header("Vision Settings")]
     [Tooltip("The angle of the forward of the view cone. 0 is forward of the sprite, 90 is up, 180 behind etc.")]
     [Range(0.0f,360.0f)]
-    public float visionDirection = 0;
+    public float visionDirection = 0;   // visual
     [Range(0.0f,360.0f)]
-    public float visionFov = 0;     // Angle Range in which enemy can attack
+    public float visionFov = 0;     // visual : Angle Range in which enemy can see
     public float visionDistance;    // Range in which enemy will Chase player
   
     [Header("Attack Settings")]
@@ -82,7 +82,6 @@ public class EnemyController : MonoBehaviour
         m_EndPatrolPoint = Vector3.right *(pos.x + patrolingDistance);
         m_NextPatrolPoint = m_StartPatrolPoint;
     }
-
 
     void Update()
     {
