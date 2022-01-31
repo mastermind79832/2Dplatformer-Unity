@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public GameObject levelOption;
+
     public void PlayGame()
     {
         SceneManager.LoadScene(1);
@@ -15,8 +17,8 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
-    public void Level()
+    public void LevelOptionPanel(bool isActive)
     {
-        //SceneManager.LoadScene(1);
+        levelOption.gameObject.SetActive(isActive);
     }
 }
